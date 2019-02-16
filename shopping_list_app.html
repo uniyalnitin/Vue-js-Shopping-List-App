@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shopping List</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <script src="vue.js"></script>
+</head>
+<body>
+    <div id="shopping-list">
+        <div class="header">
+            <h1>{{ header.toLocaleUpperCase() }}</h1>
+            <button v-if="state=== 'default'" class="btn btn-primary" @click="changeState('edit')">Add Item</button>
+            <button v-else class="btn btn-cancel" @click="changeState('default')">Cancel</button>
+        </div>
+        <div v-if="state==='edit'" class="add-item-form">
+            <input type="text" placeholder="Add an item" v-model="newItem" @keyup.enter="saveItem">
+            <p> {{ characterCount }}/200</p>
+            <button class="btn btn-primary" :disabled="newItem.length === 0" @click="saveItem">Save Item</button>
+        </div>
+        <ul>
+            <li v-for="(item, index) in items" :class="{ strikeout: item.purchased }" @click="togglePurchase(item)">{{ index }}-{{ item.label }}</li>
+        </ul>
+        <p v-if="items.length === 0"><i>No items added. Please Add Them</i></p>
+    </div>
+    <script type="text/javascript">
+        var shoppingList = new Vue({
+            el: '#shopping-list',
+            data:{
+                state: 'default',
+                header:'Shopping List App',
+                newItem: '',
+                items: [
+                    {
+                        label: '10 cups',
+                        purchased: false,
+                    },
+                    {
+                        label: '5 balls',
+                        purchased: true,
+                    },
+                    {
+                        label: '20 hats',
+                        purchased: true,
+                    },
+                ]
+            },
+            computed: {
+                characterCount() {
+                    return this.newItem.length;
+                }
+            },
+            methods:{
+                saveItem: function(){
+                    this.items.push({
+                        label: this.newItem,
+                        purchased: false,
+                    });
+                    this.newItem = ''
+                },
+                changeState: function(newState){
+                    this.state= newState;
+                    this.newItem = ''
+                },
+                togglePurchase: function(item){
+                    item.purchased = !item.purchased;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
